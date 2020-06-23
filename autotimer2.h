@@ -10,9 +10,9 @@ const float PULSE_WIDTH = 0.25;
 const byte SIGNAL_PIN_OUT = 13;  // Pin sending signal to speedo
 
 
-// Scaler8 is a helper class to select the most appropriate Prescaler and count for a 8 bit timer.
+// AutoTimer2 is a helper class to select the most appropriate Prescaler and count for a 8 bit timer.
 // Given a frequency, it calculates the most accurate Prescaler to use to achieve that frequency.
-class Scaler8 {
+class AutoTimer2 {
   private:
     const uint8_t prescalers_count = 7;
     const uint16_t prescalers[7] {1, 8, 32, 64, 128, 256, 1024};
@@ -21,12 +21,12 @@ class Scaler8 {
     uint16_t prescaler;
     uint8_t count;
     
-    uint32_t Scaler8::calculateCount(uint16_t prescale, uint32_t frequency);
+    uint32_t AutoTimer2::calculateCount(uint16_t prescale, uint32_t frequency);
     void selectPrescale();
     void setPrescaler();
     
   public:
-    Scaler8() {};
+    AutoTimer2() {};
 
     // The frequency desired, set with #setFrequency
     uint32_t Frequency() { return frequency; };

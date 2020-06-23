@@ -9,7 +9,7 @@
 #include <math.h>
 #include <Arduino.h>
 
-uint32_t Scaler8::actualFrequency() {
+uint32_t AutoTimer2::actualFrequency() {
   if (count == 0 || prescaler == 0)
     return 0;
   uint32_t scaleCount = (uint32_t)prescaler * (uint32_t)count;
@@ -17,7 +17,7 @@ uint32_t Scaler8::actualFrequency() {
 };
 
 
-void Scaler8::setFrequency(uint32_t frequency) {
+void AutoTimer2::setFrequency(uint32_t frequency) {
   this->frequency = frequency;
   this->prescaler = 0;
   this->count = 0;
@@ -30,7 +30,7 @@ void Scaler8::setFrequency(uint32_t frequency) {
 
 
 
-void Scaler8::startTimer2() {
+void AutoTimer2::startTimer2() {
   noInterrupts();
 
   resetTimer2();
@@ -54,7 +54,7 @@ void Scaler8::startTimer2() {
 }
 
 
-void Scaler8::resetTimer2() {
+void AutoTimer2::resetTimer2() {
   noInterrupts();
 
   // Clear control register
@@ -67,24 +67,17 @@ void Scaler8::resetTimer2() {
 }
 
 // Try each prescaler to get the closest result.
-void Scaler8::selectPrescale() {
+void AutoTimer2::selectPrescale() {
   double resultFreq = 0;
   uint16_t resultScale = 0;
   uint8_t resultCount = 0;
 
   for (int index = 0; index < prescalers_count; index++) {
     uint32_t cnt = calculateCount((double)prescalers[index], (double)this->frequency);
-    Serial.print("calc count: ");
-    Serial.print(cnt);
-    Serial.print(" for prescale: ");
-    Serial.println(prescalers[index]);
-
     if (cnt == 0) // Can't prescale for this frequency
       continue;
 
     double actual = CLOCK_SPEED / (prescalers[index] * cnt);
-    Serial.print(" actual : ");
-    Serial.println(actual , 8);
     if (resultCount == 0 || (abs(frequency - actual) < abs(frequency - resultFreq)) ) {
       resultFreq = actual;
       resultScale = prescalers[index];
@@ -95,12 +88,12 @@ void Scaler8::selectPrescale() {
     }
   }
   this->prescaler = resultScale;
-  this->count = round(resultCount);
+  this->count = resultCount;
 }
 
 // Calculate the count required to get given frequency using given prescaler.
 // If result is bigger than 0xFFFF, returns zero.
-uint32_t Scaler8::calculateCount(uint16_t prescale, uint32_t frequency) {
+uint32_t AutoTimer2::calculateCount(uint16_t prescale, uint32_t frequency) {
   if (prescale == 0 || frequency == 0)
     return 0;
 
@@ -109,7 +102,7 @@ uint32_t Scaler8::calculateCount(uint16_t prescale, uint32_t frequency) {
 }
 
 // Set CS22-CS20 bits for PRESCALER
-void Scaler8::setPrescaler() {
+void AutoTimer2::setPrescaler() {
   switch (prescaler) {
     case 1 :
       TCCR2B |= (1 << CS20);
