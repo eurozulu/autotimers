@@ -1,3 +1,9 @@
+
+/**
+ * Open source library
+ * Copyright Rob Gilham 2020
+ */
+ 
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -28,17 +34,17 @@ class AutoTimer1 {
   public:
     AutoTimer1();
 
-    uint32_t Frequency() {
-      return frequency;
-    };
-    uint16_t Prescaler() {
-      return prescaler;
-    };
-    uint16_t Count() {
-      return count;
-    };
+    uint32_t Frequency() { return frequency; };
+    uint16_t Prescaler() { return prescaler; };
+    uint16_t Count() { return count; };
 
-    void setFrequency(uint32_t frequency);
+    // Set the frequency, in hz, the timer should generate a pulse.
+    // The Timer will auto select the most accurate prescaler and count based on the frequency given.
+    // If the given frequency os out of the range of the Timer, Frequency, Prescaler and Count will remain at zero.
+    void setFrequency(uint32_t hz);
+
+    // Gets the actual frequency as calculated by the current prescaler and count.
+    // This may differ from the #Frequency depending on how the given frequency maps to the timer counts. Higher frequencies tend to be less accurate.
     uint32_t actualFrequency();
 
     // reset the timer, setting control registers to zero, turning off timer1

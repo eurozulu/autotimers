@@ -1,4 +1,9 @@
 
+/**
+ * Open source library
+ * Copyright Rob Gilham 2020
+ */
+ 
 #include "autotimer1.h"
 // Frequency generater
 

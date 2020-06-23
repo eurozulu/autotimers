@@ -1,3 +1,9 @@
+
+/**
+ * Open source library
+ * Copyright Rob Gilham 2020
+ */
+ 
 #include "autotimer2.h"
 #include <stdlib.h>
 #include <math.h>

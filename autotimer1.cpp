@@ -1,3 +1,9 @@
+
+/**
+ * Open source library
+ * Copyright Rob Gilham 2020
+ */
+ 
 #include "autotimer1.h"
 /*
    Using Arduino.h for the digitalWrite function only.  Otherwise, use these

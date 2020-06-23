@@ -1,4 +1,8 @@
-#include <Arduino.h>
+/**
+ * Open source library
+ * Copyright Rob Gilham 2020
+ */
+ #include <Arduino.h>
 
 #define CLOCK_SPEED 16000000
 const float PULSE_WIDTH = 0.25;

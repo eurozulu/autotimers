@@ -1,4 +1,8 @@
-// Reads the given stream as Hex char encoded bytes.
+/**
+ * Open source library
+ * Copyright Rob Gilham 2020
+ */
+ // Reads the given stream as Hex char encoded bytes.
 // so a stream of 010CFF would yeild bytes 01, 12, 255
 // Chars are always read in Pairs, with the exception of the last one, if an odd number of chars is found, then a '0' is inserted before the last char.
 // Carrage returnas and linefeeds are ignored
