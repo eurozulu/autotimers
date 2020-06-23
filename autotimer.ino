@@ -10,24 +10,26 @@
 const long BAUDRATE = 38400;
 
 
-AutoTimer1 scaler = AutoTimer1();
+AutoTimer1 autoTimer = AutoTimer1();
 
 void setOutputFreq(uint16_t hz) {
 
-  scaler.setFrequency(hz);
+  autoTimer.setFrequency(hz);
   
-  Serial.print("\n\nSetting frequency to ");
-  Serial.print(scaler.Frequency());
+  Serial.print("\nSet frequency to ");
+  Serial.print(autoTimer.Frequency());
   Serial.print(" hz:  ");
-  Serial.print(" prescaler: ");
-  Serial.println(scaler.Prescaler());
+  Serial.print("  prescaler: ");
+  Serial.print(autoTimer.Prescaler());
+  Serial.print("  count: ");
+  Serial.println(autoTimer.Count());
   Serial.print("Actual frequency: ");
-  Serial.println(scaler.actualFrequency());
+  Serial.println(autoTimer.actualFrequency());
+  Serial.print("on pin: ");
+  Serial.println(SIGNAL_PIN_OUT);
 
-  scaler.startTimer1();
+  autoTimer.startTimer1();
 }
-
-
 
 
 void setup() {
@@ -42,6 +44,8 @@ void setup() {
 
 void loop() {
 
+  // Read serial for hex encoded frequency, upto four bytes:
+  // e.g. 03E8 == 1000hz
   if (Serial.available() > 0) {
     byte buf[255];
     int len = readHexEncodedSerial(Serial, buf, 255);
