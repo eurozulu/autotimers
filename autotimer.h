@@ -12,7 +12,7 @@
 // tick = 0.0625μs | 62.5ns / clock tick)
 
 // duty cycle, as a percentage of the complete cycle. 0.1 = 10% of the cycle
-#define DUTY_CYCLE 0.5
+#define DUTY_CYCLE 0.2
 
 
 // Pulse tick is divided by the prescaler to get the number of counts the pulse should be set.

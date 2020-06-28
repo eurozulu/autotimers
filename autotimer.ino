@@ -4,13 +4,13 @@
    Copyright Rob Gilham 2020
 */
 
-#include "autotimer2.h"
+#include "autotimer1.h"
 // Frequency generater
 
 const long BAUDRATE = 38400;
 
 // use AutoTimer1 for 16 bit timer or AutoTimer2 for 8bit timer
-static AutoTimer *autoTimer = new AutoTimer2();
+static AutoTimer *autoTimer = new AutoTimer1();
 
 // debug routine to show behaviour of the #autoTimer->setFrequency(hz) method
 void setOutputFreq(uint16_t hz) {
