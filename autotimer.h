@@ -6,6 +6,10 @@
  */
 #include <stdlib.h>
 #include <stdint.h>
+#include <math.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
+//#include <avr/iom328p.h>
 
 // 16mz cpu clock speed
 #define CLOCK_SPEED 16000000
@@ -13,13 +17,7 @@
 
 // duty cycle, as a percentage of the complete cycle. 0.1 = 10% of the cycle
 #define DUTY_CYCLE 0.2
-
-
-// Pulse tick is divided by the prescaler to get the number of counts the pulse should be set.
-// Width (in μs) / 0.0625μs = (50 / 0.0625) = 800
-#define PULSE_TICK (PULSE_WIDTH_MIN / (1000000 / CLOCK_SPEED))
   
-const uint8_t SIGNAL_PIN_OUT = 13;  // Pin sending out signal 
 
 // AutoTimer is a wrapper class around a specific AVR Timer which assists in using that timer.
 // AutoTimer itself is abstract, using specific subclasses for each real Timer (Timer1, Timer2)

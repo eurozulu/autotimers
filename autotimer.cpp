@@ -5,7 +5,6 @@
 */
 
 #include "autotimer.h"
-#include <Arduino.h>
 /*
    Using Arduino.h for the digitalWrite function only.  Otherwise, use these
   #include <math.h>

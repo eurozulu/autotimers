@@ -7,12 +7,11 @@
    Fixed at 50% DUTY Cycle.
    
 */
+#include "autotimer.h"
+
 
 // Output pit is pin OC2A = Digital pin 11
-#define DDR_OC2A B00001000  // Pin definition linked to DDR_OC2A (B00001000 / PB3 = DigitalPin 11)
-
-#include <Arduino.h>
-#include "autotimer.h"
+#define DDR_OC2A 8 // B00001000 Pin definition linked to DDR_OC2A (B00001000 / PB3 = DigitalPin 11)
 
 #define PRESCALER_COUNT 7     // The number of prescalers available to this timer
 

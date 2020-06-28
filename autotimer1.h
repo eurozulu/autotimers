@@ -7,7 +7,7 @@
 #define PRESCALER_COUNT 5     // The number of prescalers available to this timer
 
 // Output pit is pin OC1A = Digital pin 9
-#define DDR_OC1A B00000010  // Pin definition linked to DDR_OC1A (B00000010 / PB1 = DigitalPin 9)
+#define DDR_OC1A 2 //B00000010  Pin definition linked to DDR_OC1A (B00000010 / PB1 = DigitalPin 9)
 
 
 // AutoTimer1 is a wrapper class for the 16-bit Timer1.

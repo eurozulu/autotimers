@@ -5,9 +5,6 @@
 */
 
 #include "autotimer2.h"
-#include <stdlib.h>
-#include <math.h>
-
 
 void AutoTimer2::startTimer() {
   resetTimer();

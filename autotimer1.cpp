@@ -9,13 +9,8 @@
   Open source library
   Copyright Rob Gilham 2020
 */
-#include <Arduino.h>
 
 #include "autotimer1.h"
-#include <math.h>
-#include <avr/io.h>
-#include <avr/interrupt.h>
-//#include <avr/iom328p.h>
 
 
 AutoTimer1::AutoTimer1() : AutoTimer() { };
