@@ -24,8 +24,6 @@ void setOutputFreq(uint16_t hz) {
   Serial.print(autoTimer->Prescaler());
   Serial.print("  count: ");
   Serial.print(autoTimer->Count());
-  Serial.print("  on pin: ");
-  Serial.println(SIGNAL_PIN_OUT);
 
   autoTimer->startTimer();
 }
@@ -35,18 +33,12 @@ void setup() {
   Serial.begin(BAUDRATE);
   Serial.println("Beginning frequency generation");
 
-  // Setup output signal pin and default to high
-  pinMode(SIGNAL_PIN_OUT, OUTPUT);
-  //digitalWrite(SIGNAL_PIN_OUT, HIGH);
-
   // Set output to zero (off) and wait for number on serial.
   setOutputFreq(0);
 }
 
 void loop() {
-
-  // Read serial for hex encoded frequency, upto 2 bytes:
-  // e.g. 03E8 == 1000hz
+  // Read serial for numeric frequency, upto 0xFFFF:
   if (Serial.available() > 0) {
     uint32_t hz = readNumber(Serial);
     if (hz > 0xFFFF) {
@@ -66,5 +58,4 @@ void loop() {
     Serial.print(autoTimer->actualFrequency());
     Serial.println(" hz");
   }
-
 }
