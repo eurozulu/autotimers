@@ -1,34 +1,33 @@
 
 /**
- * Open source library
- * Copyright Rob Gilham 2020
- */
- 
+   Open source library
+   Copyright Rob Gilham 2020
+*/
+
 #include "autotimer1.h"
 // Frequency generater
 
 const long BAUDRATE = 38400;
 
+// use AutoTimer1 for 16 bit timer or AutoTimer2 for 8bit timer
+static AutoTimer *autoTimer = new AutoTimer1();
 
-AutoTimer1 autoTimer = AutoTimer1();
-
+// debug routine to show behaviour of the #autoTimer->setFrequency(hz) method
 void setOutputFreq(uint16_t hz) {
 
-  autoTimer.setFrequency(hz);
-  
+  autoTimer->setFrequency(hz);
+
   Serial.print("\nSet frequency to ");
-  Serial.print(autoTimer.Frequency());
+  Serial.print(autoTimer->Frequency());
   Serial.print(" hz:  ");
   Serial.print("  prescaler: ");
-  Serial.print(autoTimer.Prescaler());
+  Serial.print(autoTimer->Prescaler());
   Serial.print("  count: ");
-  Serial.println(autoTimer.Count());
-  Serial.print("Actual frequency: ");
-  Serial.println(autoTimer.actualFrequency());
-  Serial.print("on pin: ");
+  Serial.print(autoTimer->Count());
+  Serial.print("  on pin: ");
   Serial.println(SIGNAL_PIN_OUT);
 
-  autoTimer.startTimer1();
+  autoTimer->startTimer();
 }
 
 
@@ -38,34 +37,34 @@ void setup() {
 
   // Setup output signal pin and default to high
   pinMode(SIGNAL_PIN_OUT, OUTPUT);
-  digitalWrite(SIGNAL_PIN_OUT, HIGH);
+  //digitalWrite(SIGNAL_PIN_OUT, HIGH);
+
+  // Set output to zero (off) and wait for number on serial.
   setOutputFreq(0);
 }
 
 void loop() {
 
-  // Read serial for hex encoded frequency, upto four bytes:
+  // Read serial for hex encoded frequency, upto 2 bytes:
   // e.g. 03E8 == 1000hz
   if (Serial.available() > 0) {
-    byte buf[255];
-    int len = readHexEncodedSerial(Serial, buf, 255);
-
-    if (len > 0) {
-      uint16_t hz = buf[0];
-      if (len > 1) {
-        hz = (hz << 8) + buf[1];
-      }
-
-      setOutputFreq(hz);
-
-      uint8_t top = OCR1A;
-      Serial.print("OCR1A: ");
-      Serial.println(top);
-
-      top = OCR1B;
-      Serial.print("OCR1B: ");
-      Serial.println(top);
-
+    uint32_t hz = readNumber(Serial);
+    if (hz > 0xFFFF) {
+      Serial.print("frequency ");
+      Serial.print(hz);
+      Serial.print(" is too large.  Maximum is ");
+      Serial.println(0xFFFF);
+      return;
     }
+    
+    Serial.print("Setting output frequency to ");
+    Serial.print(hz);
+    Serial.println(" hz");
+    setOutputFreq((uint16_t) hz);
+
+    Serial.print("Achieved frequency ");
+    Serial.print(autoTimer->actualFrequency());
+    Serial.println(" hz");
   }
+
 }

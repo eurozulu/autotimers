@@ -1,56 +1,42 @@
-
 /**
- * Open source library
- * Copyright Rob Gilham 2020
- */
- 
-#include <stdlib.h>
-#include <stdint.h>
+   Open source library
+   Copyright Rob Gilham 2020
+*/
+#include "autotimer.h"
+
+#define PRESCALER_COUNT 5     // The number of prescalers available to this timer
+
+// Output pit is pin OC1A = Digital pin 9
 
 
-
-#define CLOCK_SPEED 16000000
-const float PULSE_WIDTH = 0.25;
-
-const uint8_t SIGNAL_PIN_OUT = 13;  // Pin sending signal to speedo
-#define PRESCALER_COUNT 5
-
-// AutoTimer1 is a wrapper class for the Timer1.
-// Given a frequency, it calculates the most accurate Prescaler / Count comnbination to use to achieve that frequency.
-class AutoTimer1 {
+// AutoTimer1 is a wrapper class for the 16-bit Timer1.
+class AutoTimer1 : public AutoTimer {
   private:
-    const uint16_t prescalers[PRESCALER_COUNT] {1, 8, 64, 256, 1024};
+    // A fixed list of the available prescalers for this timer
+    const uint16_t PRESCALERS[PRESCALER_COUNT] {1, 8, 64, 256, 1024};
 
-    uint32_t frequency;
-    uint16_t prescaler;
-    uint16_t count;
+    // Sets the Timer bits CS12, CS11 & CS10 in TCCR1B to define the given prescaler
+    // if prescaler not known sets all bits to zero, disabling the Timer.
+    virtual void setTimerPrescaler(uint16_t scaler);
 
-    // Calculates the timer count to use for the current frequency, using the given prescaller.
-    // IF the result is bigger than the Timer count register (16-bit) then zero is returned.
-    uint32_t AutoTimer1::calculateCount(uint16_t prescale, uint32_t frequency);
-    void selectPrescaleCount();
-    void setTimerPrescaler(uint16_t scaler);
+  protected:
+    // Gets the total number of prescalers known to this timer
+    uint8_t prescalersLength() { return PRESCALER_COUNT; };
+    // Gets the decimal prescaler value for the given index == ( < prescalersLength)
+    uint16_t prescalers(uint8_t index) {
+      return index >= 0 && index < PRESCALER_COUNT ? PRESCALERS[index] : 0;
+    };
+    
+    // Gets the TOP/MAX value for this Timer
+    uint16_t counterMaximum() { return 0xFFFF;};  // 16-bit timer
 
   public:
     AutoTimer1();
 
-    uint32_t Frequency() { return frequency; };
-    uint16_t Prescaler() { return prescaler; };
-    uint16_t Count() { return count; };
-
-    // Set the frequency, in hz, the timer should generate a pulse.
-    // The Timer will auto select the most accurate prescaler and count based on the frequency given.
-    // If the given frequency os out of the range of the Timer, Frequency, Prescaler and Count will remain at zero.
-    void setFrequency(uint32_t hz);
-
-    // Gets the actual frequency as calculated by the current prescaler and count.
-    // This may differ from the #Frequency depending on how the given frequency maps to the timer counts. Higher frequencies tend to be less accurate.
-    uint32_t actualFrequency();
-
     // reset the timer, setting control registers to zero, turning off timer1
-    void resetTimer1();
+    void resetTimer();
 
     // Sets Timer1 up to generate the currentfrequency, if that frequency is within the range of the timer.
-    void startTimer1();
+    void startTimer();
 
 };

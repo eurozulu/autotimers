@@ -1,109 +1,55 @@
 
 /**
- * Open source library
- * Copyright Rob Gilham 2020
- */
- 
+   Open source library
+   Copyright Rob Gilham 2020
+
+  // TImer2 not yet implemented fully
+*/
+
 #include "autotimer2.h"
 #include <stdlib.h>
 #include <math.h>
 #include <Arduino.h>
 
-uint32_t AutoTimer2::actualFrequency() {
-  if (count == 0 || prescaler == 0)
-    return 0;
-  uint32_t scaleCount = (uint32_t)prescaler * (uint32_t)count;
-  return CLOCK_SPEED / scaleCount;
-};
 
-
-void AutoTimer2::setFrequency(uint32_t frequency) {
-  this->frequency = frequency;
-  this->prescaler = 0;
-  this->count = 0;
-
-  if (frequency < 1) {
-    return;
-  }
-  selectPrescale();
-};
-
-
-
-void AutoTimer2::startTimer2() {
-  noInterrupts();
-
-  resetTimer2();
-
-  // turn on CTC mode. (reset timer counter when TOP(OCR1A) reached)
-  TCCR2A |= (1 << WGM21);
+void AutoTimer2::startTimer() {
+  cli();
+  resetTimer();
 
   // set compare match registers
-  uint8_t top = Count();
-  uint8_t start = top * PULSE_WIDTH;
-  if (start > top)
-    start = 1;
+  uint8_t top = (uint8_t)Count();
+  uint8_t start = top - (DUTY_CYCLE * top);
+  if (start < MINIMUM_COUNT || start > top) {// Too low or rolledover/under to become bigger than top
+    sei();
+    return;
+  }
+  
+  // Set outputcompares, OCR2A = state change point
+  OCR2A = start;
 
-  // Set outputcompares, OCR2A = full cycle, OCR2B when pulse starts.
-  OCR2A = top;
-  OCR2B = start;
+  // turn on mode 8. (PWM, phase and frequency correct with ICR1 = TOP)
+  TCCR2A |= (1 << WGM21);
 
   TIMSK2 |= (1 << OCIE2A) | (1 << OCIE2B);  // enable 'On compare match' for COMPB
-
-  interrupts();
+  sei();
 }
 
 
-void AutoTimer2::resetTimer2() {
-  noInterrupts();
-
+void AutoTimer2::resetTimer() {
+  sei();
   // Clear control register
   TCCR2A = 0; // set entire TCCR2A register to 0
   TCCR2B = 0; // same for TCCR2B
   TCNT2  = 0; // initialize counter value to 0
   TIMSK2 = 0;
-
-  interrupts();
+  cli();
 }
 
-// Try each prescaler to get the closest result.
-void AutoTimer2::selectPrescale() {
-  double resultFreq = 0;
-  uint16_t resultScale = 0;
-  uint8_t resultCount = 0;
 
-  for (int index = 0; index < prescalers_count; index++) {
-    uint32_t cnt = calculateCount((double)prescalers[index], (double)this->frequency);
-    if (cnt == 0) // Can't prescale for this frequency
-      continue;
-
-    double actual = CLOCK_SPEED / (prescalers[index] * cnt);
-    if (resultCount == 0 || (abs(frequency - actual) < abs(frequency - resultFreq)) ) {
-      resultFreq = actual;
-      resultScale = prescalers[index];
-      resultCount = cnt;
-      if (actual == this->frequency) {
-        break;
-      }
-    }
-  }
-  this->prescaler = resultScale;
-  this->count = resultCount;
-}
-
-// Calculate the count required to get given frequency using given prescaler.
-// If result is bigger than 0xFFFF, returns zero.
-uint32_t AutoTimer2::calculateCount(uint16_t prescale, uint32_t frequency) {
-  if (prescale == 0 || frequency == 0)
-    return 0;
-
-  uint32_t cnt = CLOCK_SPEED / (prescale * frequency) - 1;
-  return (cnt < 0xFF) ? cnt : 0;
-}
 
 // Set CS22-CS20 bits for PRESCALER
-void AutoTimer2::setPrescaler() {
-  switch (prescaler) {
+void AutoTimer2::setTimerPrescaler(uint16_t scaler) {
+  switch (scaler) {
     case 1 :
       TCCR2B |= (1 << CS20);
       break;
