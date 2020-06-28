@@ -1,6 +1,6 @@
 ## Autotimers
 
-####Overview
+#### Overview
 A library to assist in using the atmega's in-built Timers to generate an output frequency square wave.
   
 Automatically calculates the most suitable prescaler / counter TOP to achive the most accurate frequency.  
@@ -11,7 +11,7 @@ Frequency can be changed at any time and as often as required.
 Timer will restart itself on change to ensure reliable frequency output.  
 
 
-##Usage
+## Usage
 The simpliest way to use the library is to copy the autotimer files into your project directory.  
 Required files are the two base files:  
  - autotimer.h
@@ -48,6 +48,6 @@ The Timer can be stopped by calling:
 `autoTimer->resetTimer();`
 and restarted by calling `autoTimer->startTimer()` again.
 
-####Example
-An example `autotimer.ino` is included in the project.  
+#### Example
+An example [`autotimer.ino`](https://github.com/eurozulu/autotimers/blob/master/autotimer.ino) is included in the project.  
 This listens on the Serial port for a numeric value and uses this to set the frequency of the Timer output.
