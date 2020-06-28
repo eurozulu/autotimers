@@ -1,12 +1,20 @@
 /**
    Open source library
    Copyright Rob Gilham 2020
+
+   Timer2 uses WaveGen mode 5, PWM, phase correct with TOP set by OCRA
+   Running at double the required frequency, it clears OC2A on upcount hitting OCR1A and sets when counts back to BOTTOM.
+   Fixed at 50% DUTY Cycle.
+   
 */
+
+// Output pit is pin OC2A = Digital pin 11
+#define DDR_OC2A B00001000  // Pin definition linked to DDR_OC2A (B00001000 / PB3 = DigitalPin 11)
+
 #include <Arduino.h>
 #include "autotimer.h"
 
 #define PRESCALER_COUNT 7     // The number of prescalers available to this timer
-#define MINIMUM_COUNT 25
 
 // AutoTimer2 is a helper class to select the most appropriate Prescaler and count for a 8 bit timer.
 // Given a frequency, it calculates the most accurate Prescaler to use to achieve that frequency.

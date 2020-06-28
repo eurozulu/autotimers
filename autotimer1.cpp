@@ -17,7 +17,6 @@
 #include <avr/interrupt.h>
 //#include <avr/iom328p.h>
 
-#define DDR_OC1A B00000010  // Pin definition linked to DDR_OC1A (B00000010 / PB1 = DigitalPin 9)
 
 AutoTimer1::AutoTimer1() : AutoTimer() { };
 

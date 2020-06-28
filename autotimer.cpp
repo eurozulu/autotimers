@@ -33,13 +33,17 @@ uint32_t AutoTimer::actualFrequency() {
 void AutoTimer::setFrequency(uint16_t frequency) {
 
   resetTimer(); // turn off the timer & reset it.
+  this->frequency = 0;
+  this->prescaler = 0;
+  this->count = 0;
+
   double resultFreq = 0;    // accurate record (double) of the best result so far.
   uint16_t resultScale = 0;
   uint16_t resultCount = 0;
 
   if (frequency > 0) {
-    uint16_t dblFreq = frequency * 2;
-    
+    float dblFreq = frequency * 2;
+
     // Try each of the prescalers to see which produces the closes approximation of the requested frequency
     for (int index = 0; index < prescalersLength(); index++) {
       uint16_t presclr = prescalers(index);
@@ -60,15 +64,11 @@ void AutoTimer::setFrequency(uint16_t frequency) {
       }
     }
   }
-  Serial.print("presetting frequency ");
-  Serial.println(frequency);
-  Serial.print("presetting prescaler ");
-  Serial.println(resultScale);
-  Serial.print("presetting count ");
-  Serial.println(resultCount);
-  Serial.print("actual frequency ");
-  Serial.println(resultFreq / 2);
 
+  if (resultScale == 0) {
+    return;
+  }
+  
   this->frequency = frequency;
   this->prescaler = resultScale;
   this->count = resultCount;
